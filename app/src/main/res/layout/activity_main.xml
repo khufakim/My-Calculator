@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_main"
+    android:padding="12dp">
+
+    <!-- ===== TOP BAR ===== -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Scientific Calculator"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_func"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+    </RelativeLayout>
+
+    <!-- ===== DISPLAY CARD ===== -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="#14141C"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="end|bottom"
+            android:padding="16dp">
+
+            <!-- Expression (small, top) -->
+            <TextView
+                android:id="@+id/tvExpression"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#7A7A9A"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:ellipsize="start" />
+
+            <!-- Main result (big, below) -->
+            <TextView
+                android:id="@+id/tvDisplay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:gravity="end"
+                android:maxLines="2"
+                android:ellipsize="start"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- ===== MODE PANELS CONTAINER ===== -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- ===== 1. SCIENTIFIC KEYPAD ===== -->
+        <LinearLayout
+            android:id="@+id/layoutScientific"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <!-- Row 1: sin cos tan π -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnSin" android:text="sin" style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnCos" android:text="cos" style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnTan" android:text="tan" style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnPi"  android:text="π"   style="@style/CalcBtnFunc"/>
+            </LinearLayout>
+
+            <!-- Row 2: √ x² xʸ log -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnSqrt" android:text="√"   style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnSq"   android:text="x²"  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnPow"  android:text="xʸ"  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnLog"  android:text="log" style="@style/CalcBtnFunc"/>
+            </LinearLayout>
+
+            <!-- Row 3: ln e ( ) -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnLn"        android:text="ln" style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnE"         android:text="e"  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnOpenParen" android:text="("  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnCloseParen" android:text=")" style="@style/CalcBtnFunc"/>
+            </LinearLayout>
+
+            <!-- Row 4: C ⌫ % ÷ -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnClear"     android:text="C"  style="@style/CalcBtnClear"/>
+                <Button android:id="@+id/btnBackspace" android:text="⌫"  style="@style/CalcBtnClear"/>
+                <Button android:id="@+id/btnPct"       android:text="%"  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnDiv"       android:text="÷"  style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 5: 7 8 9 × -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btn7"   android:text="7" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btn8"   android:text="8" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btn9"   android:text="9" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnMul" android:text="×" style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 6: 4 5 6 − -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btn4"   android:text="4" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btn5"   android:text="5" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btn6"   android:text="6" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnSub" android:text="−" style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 7: 1 2 3 + -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btn1"   android:text="1" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btn2"   android:text="2" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btn3"   android:text="3" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnAdd" android:text="+" style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 8: DEG/RAD 0 . = -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnMode" android:text="DEG" style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btn0"    android:text="0"   style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnDot"  android:text="."   style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnEq"   android:text="="   style="@style/CalcBtnEq"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ===== 2. COMPLEX KEYPAD ===== -->
+        <LinearLayout
+            android:id="@+id/layoutComplex"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Row 1: i Re Im abs -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnI"   android:text="i"   style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnRe"  android:text="re"  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnIm"  android:text="im"  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnAbs" android:text="abs" style="@style/CalcBtnFunc"/>
+            </LinearLayout>
+
+            <!-- Row 2: arg conj ( ) -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnArg"        android:text="arg"  style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnConj"       android:text="conj" style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnCpxOpen"   android:text="("    style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnCpxClose"  android:text=")"    style="@style/CalcBtnFunc"/>
+            </LinearLayout>
+
+            <!-- Row 3: C ⌫ % ÷ -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnCpxClear"  android:text="C" style="@style/CalcBtnClear"/>
+                <Button android:id="@+id/btnCpxBack"   android:text="⌫" style="@style/CalcBtnClear"/>
+                <Button android:id="@+id/btnCpxPct"    android:text="%" style="@style/CalcBtnFunc"/>
+                <Button android:id="@+id/btnCpxDiv"    android:text="÷" style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 4: 7 8 9 × -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnCpx7"   android:text="7" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpx8"   android:text="8" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpx9"   android:text="9" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpxMul" android:text="×" style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 5: 4 5 6 − -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnCpx4"   android:text="4" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpx5"   android:text="5" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpx6"   android:text="6" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpxSub" android:text="−" style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 6: 1 2 3 + -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnCpx1"   android:text="1" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpx2"   android:text="2" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpx3"   android:text="3" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpxAdd" android:text="+" style="@style/CalcBtnOp"/>
+            </LinearLayout>
+
+            <!-- Row 7: 0 . = -->
+            <LinearLayout style="@style/CalcRow">
+                <Button android:id="@+id/btnCpx0"   android:text="0" style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpxDot" android:text="." style="@style/CalcBtnNum"/>
+                <Button android:id="@+id/btnCpxEq"  android:text="=" style="@style/CalcBtnEq"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ===== 3. MATRIX PANEL ===== -->
+        <ScrollView
+            android:id="@+id/layoutMatrix"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <!-- Matrix A 2x2 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Matrix A (2x2)"
+                    android:textColor="#FF9F0A"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/etA11"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A11"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etA12"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A12"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/etA21"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A21"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etA22"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A22"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                </LinearLayout>
+
+                <!-- Matrix B 2x2 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Matrix B (2x2)"
+                    android:textColor="#FF9F0A"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginTop="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/etB11"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B11"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etB12"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B12"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/etB21"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B21"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etB22"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B22"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                </LinearLayout>
+
+                <!-- Matrix Operations Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+                    <Button
+                        android:id="@+id/btnMatDetA"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="det(A)"
+                        style="@style/CalcBtnFunc" />
+                    <Button
+                        android:id="@+id/btnMatTransA"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="Aᵀ"
+                        style="@style/CalcBtnFunc" />
+                    <Button
+                        android:id="@+id/btnMatInvA"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="A⁻¹"
+                        style="@style/CalcBtnFunc" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+                    <Button
+                        android:id="@+id/btnMatAdd"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="A + B"
+                        style="@style/CalcBtnOp" />
+                    <Button
+                        android:id="@+id/btnMatSub"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="A − B"
+                        style="@style/CalcBtnOp" />
+                    <Button
+                        android:id="@+id/btnMatMul"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="A × B"
+                        style="@style/CalcBtnOp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- ===== 4. CALCULUS PANEL ===== -->
+        <ScrollView
+            android:id="@+id/layoutCalculus"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Function f(x)"
+                    android:textColor="#FF9F0A"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/etFunction"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="e.g. x^2 + sin(x)"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#7A7A9A"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/btn_func"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Evaluation Point / Bounds"
+                    android:textColor="#FF9F0A"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginTop="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+
+                    <EditText
+                        android:id="@+id/etXValue"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="x = ?"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_marginEnd="4dp" />
+
+                    <EditText
+                        android:id="@+id/etLowerBound"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="Lower (a)"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_marginEnd="4dp" />
+
+                    <EditText
+                        android:id="@+id/etUpperBound"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="Upper (b)"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func" />
+                </LinearLayout>
+
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <Button
+                        android:id="@+id/btnDerive"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="d/dx f(x)"
+                        style="@style/CalcBtnOp" />
+
+                    <Button
+                        android:id="@+id/btnIntegrate"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="∫ f(x) dx"
+                        style="@style/CalcBtnOp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp" />
+
+                    <Button
+                        android:id="@+id/btnEvalFunc"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:text="f(x)"
+                        style="@style/CalcBtnFunc" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </FrameLayout>
+</LinearLayout>
