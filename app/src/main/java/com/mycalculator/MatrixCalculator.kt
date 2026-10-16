@@ -79,6 +79,24 @@ object MatrixCalculator {
         )
     }
 
+    fun inverse3x3(m: Array<DoubleArray>): Array<DoubleArray>? {
+        val det = determinant3x3(m)
+        if (det == 0.0) return null
+
+        val inv = Array(3) { DoubleArray(3) }
+        inv[0][0] = (m[1][1] * m[2][2] - m[1][2] * m[2][1]) / det
+        inv[0][1] = (m[0][2] * m[2][1] - m[0][1] * m[2][2]) / det
+        inv[0][2] = (m[0][1] * m[1][2] - m[0][2] * m[1][1]) / det
+        inv[1][0] = (m[1][2] * m[2][0] - m[1][0] * m[2][2]) / det
+        inv[1][1] = (m[0][0] * m[2][2] - m[0][2] * m[2][0]) / det
+        inv[1][2] = (m[0][2] * m[1][0] - m[0][0] * m[1][2]) / det
+        inv[2][0] = (m[1][0] * m[2][1] - m[1][1] * m[2][0]) / det
+        inv[2][1] = (m[0][1] * m[2][0] - m[0][0] * m[2][1]) / det
+        inv[2][2] = (m[0][0] * m[1][1] - m[0][1] * m[1][0]) / det
+
+        return inv
+    }
+
     fun formatMatrix(m: Array<DoubleArray>): String {
         val sb = StringBuilder()
         for (row in m) {
@@ -87,9 +105,9 @@ object MatrixCalculator {
                 val formatted = if (value % 1.0 == 0.0) {
                     value.toLong().toString()
                 } else {
-                    String.format(Locale.US, "%.4f", value).trimEnd('0').trimEnd('.')
+                    String.format(Locale.US, "%.3f", value).trimEnd('0').trimEnd('.')
                 }
-                sb.append(formatted).append("\t")
+                sb.append(formatted.padStart(6)).append(" ")
             }
             sb.append("]\n")
         }

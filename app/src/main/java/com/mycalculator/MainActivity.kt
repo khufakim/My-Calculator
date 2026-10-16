@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private var currentExpression = ""
     private var isDegreeMode = true
     private var isResultDisplayed = false
+    private var isMatrix3x3 = false
 
     private lateinit var spinnerMode: Spinner
     private lateinit var tvExpression: TextView
@@ -28,15 +29,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layoutMatrix: View
     private lateinit var layoutCalculus: View
 
-    // Matrix input fields
-    private lateinit var etA11: EditText
-    private lateinit var etA12: EditText
-    private lateinit var etA21: EditText
-    private lateinit var etA22: EditText
-    private lateinit var etB11: EditText
-    private lateinit var etB12: EditText
-    private lateinit var etB21: EditText
-    private lateinit var etB22: EditText
+    // Matrix headers & toggle
+    private lateinit var tvMatrixHeaderA: TextView
+    private lateinit var tvMatrixHeaderB: TextView
+    private lateinit var btnMatrixToggleSize: Button
+
+    // Matrix A input fields
+    private lateinit var etA11: EditText; private lateinit var etA12: EditText; private lateinit var etA13: EditText
+    private lateinit var etA21: EditText; private lateinit var etA22: EditText; private lateinit var etA23: EditText
+    private lateinit var etA31: EditText; private lateinit var etA32: EditText; private lateinit var etA33: EditText
+    private lateinit var rowA3: View
+
+    // Matrix B input fields
+    private lateinit var etB11: EditText; private lateinit var etB12: EditText; private lateinit var etB13: EditText
+    private lateinit var etB21: EditText; private lateinit var etB22: EditText; private lateinit var etB23: EditText
+    private lateinit var etB31: EditText; private lateinit var etB32: EditText; private lateinit var etB33: EditText
+    private lateinit var rowB3: View
 
     // Calculus input fields
     private lateinit var etFunction: EditText
@@ -66,15 +74,22 @@ class MainActivity : AppCompatActivity() {
         layoutMatrix = findViewById(R.id.layoutMatrix)
         layoutCalculus = findViewById(R.id.layoutCalculus)
 
-        // Matrix
-        etA11 = findViewById(R.id.etA11)
-        etA12 = findViewById(R.id.etA12)
-        etA21 = findViewById(R.id.etA21)
-        etA22 = findViewById(R.id.etA22)
-        etB11 = findViewById(R.id.etB11)
-        etB12 = findViewById(R.id.etB12)
-        etB21 = findViewById(R.id.etB21)
-        etB22 = findViewById(R.id.etB22)
+        // Matrix Header & Toggle
+        tvMatrixHeaderA = findViewById(R.id.tvMatrixHeaderA)
+        tvMatrixHeaderB = findViewById(R.id.tvMatrixHeaderB)
+        btnMatrixToggleSize = findViewById(R.id.btnMatrixToggleSize)
+
+        // Matrix A
+        etA11 = findViewById(R.id.etA11); etA12 = findViewById(R.id.etA12); etA13 = findViewById(R.id.etA13)
+        etA21 = findViewById(R.id.etA21); etA22 = findViewById(R.id.etA22); etA23 = findViewById(R.id.etA23)
+        etA31 = findViewById(R.id.etA31); etA32 = findViewById(R.id.etA32); etA33 = findViewById(R.id.etA33)
+        rowA3 = findViewById(R.id.rowA3)
+
+        // Matrix B
+        etB11 = findViewById(R.id.etB11); etB12 = findViewById(R.id.etB12); etB13 = findViewById(R.id.etB13)
+        etB21 = findViewById(R.id.etB21); etB22 = findViewById(R.id.etB22); etB23 = findViewById(R.id.etB23)
+        etB31 = findViewById(R.id.etB31); etB32 = findViewById(R.id.etB32); etB33 = findViewById(R.id.etB33)
+        rowB3 = findViewById(R.id.rowB3)
 
         // Calculus
         etFunction = findViewById(R.id.etFunction)
@@ -287,12 +302,17 @@ class MainActivity : AppCompatActivity() {
         updateDisplay()
     }
 
-    // ===== 3. MATRIX KEYPAD =====
+    // ===== 3. MATRIX KEYPAD & TOGGLE =====
     private fun setupMatrixKeypad() {
+        btnMatrixToggleSize.setOnClickListener {
+            isMatrix3x3 = !isMatrix3x3
+            updateMatrixLayoutSize()
+        }
+
         findViewById<Button>(R.id.btnMatDetA)?.setOnClickListener {
             val a = readMatrixA()
             if (a != null) {
-                val det = MatrixCalculator.determinant2x2(a)
+                val det = if (isMatrix3x3) MatrixCalculator.determinant3x3(a) else MatrixCalculator.determinant2x2(a)
                 tvExpression.text = "det(A)"
                 tvDisplay.text = if (det % 1.0 == 0.0) det.toLong().toString() else det.toString()
             } else {
@@ -314,7 +334,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnMatInvA)?.setOnClickListener {
             val a = readMatrixA()
             if (a != null) {
-                val inv = MatrixCalculator.inverse2x2(a)
+                val inv = if (isMatrix3x3) MatrixCalculator.inverse3x3(a) else MatrixCalculator.inverse2x2(a)
                 if (inv != null) {
                     tvExpression.text = "A⁻¹"
                     tvDisplay.text = MatrixCalculator.formatMatrix(inv)
@@ -369,13 +389,46 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateMatrixLayoutSize() {
+        val vis3x3 = if (isMatrix3x3) View.VISIBLE else View.GONE
+        etA13.visibility = vis3x3
+        etA23.visibility = vis3x3
+        rowA3.visibility = vis3x3
+
+        etB13.visibility = vis3x3
+        etB23.visibility = vis3x3
+        rowB3.visibility = vis3x3
+
+        val dimText = if (isMatrix3x3) "Dimension: 3x3" else "Dimension: 2x2"
+        btnMatrixToggleSize.text = dimText
+        tvMatrixHeaderA.text = if (isMatrix3x3) "Matrix A (3x3)" else "Matrix A (2x2)"
+        tvMatrixHeaderB.text = if (isMatrix3x3) "Matrix B (3x3)" else "Matrix B (2x2)"
+    }
+
     private fun readMatrixA(): Array<DoubleArray>? {
         return try {
             val a11 = etA11.text.toString().toDouble()
             val a12 = etA12.text.toString().toDouble()
             val a21 = etA21.text.toString().toDouble()
             val a22 = etA22.text.toString().toDouble()
-            arrayOf(doubleArrayOf(a11, a12), doubleArrayOf(a21, a22))
+
+            if (isMatrix3x3) {
+                val a13 = etA13.text.toString().toDouble()
+                val a23 = etA23.text.toString().toDouble()
+                val a31 = etA31.text.toString().toDouble()
+                val a32 = etA32.text.toString().toDouble()
+                val a33 = etA33.text.toString().toDouble()
+                arrayOf(
+                    doubleArrayOf(a11, a12, a13),
+                    doubleArrayOf(a21, a22, a23),
+                    doubleArrayOf(a31, a32, a33)
+                )
+            } else {
+                arrayOf(
+                    doubleArrayOf(a11, a12),
+                    doubleArrayOf(a21, a22)
+                )
+            }
         } catch (e: Exception) {
             null
         }
@@ -387,7 +440,24 @@ class MainActivity : AppCompatActivity() {
             val b12 = etB12.text.toString().toDouble()
             val b21 = etB21.text.toString().toDouble()
             val b22 = etB22.text.toString().toDouble()
-            arrayOf(doubleArrayOf(b11, b12), doubleArrayOf(b21, b22))
+
+            if (isMatrix3x3) {
+                val b13 = etB13.text.toString().toDouble()
+                val b23 = etB23.text.toString().toDouble()
+                val b31 = etB31.text.toString().toDouble()
+                val b32 = etB32.text.toString().toDouble()
+                val b33 = etB33.text.toString().toDouble()
+                arrayOf(
+                    doubleArrayOf(b11, b12, b13),
+                    doubleArrayOf(b21, b22, b23),
+                    doubleArrayOf(b31, b32, b33)
+                )
+            } else {
+                arrayOf(
+                    doubleArrayOf(b11, b12),
+                    doubleArrayOf(b21, b22)
+                )
+            }
         } catch (e: Exception) {
             null
         }

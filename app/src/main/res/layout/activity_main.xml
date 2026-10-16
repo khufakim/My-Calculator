@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:text="Scientific Calculator"
+            android:text="Pro Calculator"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -39,49 +39,56 @@
             android:paddingBottom="4dp" />
     </RelativeLayout>
 
-    <!-- ===== DISPLAY CARD ===== -->
+    <!-- ===== LARGE EXPANDED DISPLAY CARD ===== -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardDisplay"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
+        android:minHeight="140dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="6dp"
         app:cardBackgroundColor="#14141C"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="end|bottom"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
 
-            <!-- Expression (small, top) -->
-            <TextView
-                android:id="@+id/tvExpression"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#7A7A9A"
-                android:textSize="16sp"
-                android:maxLines="1"
-                android:ellipsize="start" />
-
-            <!-- Main result (big, below) -->
-            <TextView
-                android:id="@+id/tvDisplay"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="#FFFFFF"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:gravity="end"
-                android:maxLines="2"
-                android:ellipsize="start"
-                android:layout_marginTop="4dp" />
+                android:orientation="vertical"
+                android:gravity="end|bottom"
+                android:padding="16dp">
 
-        </LinearLayout>
+                <!-- Expression (small, top) -->
+                <TextView
+                    android:id="@+id/tvExpression"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="#7A7A9A"
+                    android:textSize="16sp"
+                    android:maxLines="2"
+                    android:ellipsize="start" />
+
+                <!-- Main result (big, expanded for matrix and multi-line) -->
+                <TextView
+                    android:id="@+id/tvDisplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:fontFamily="monospace"
+                    android:gravity="end"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+        </ScrollView>
     </androidx.cardview.widget.CardView>
 
     <!-- ===== MODE PANELS CONTAINER ===== -->
@@ -227,7 +234,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- ===== 3. MATRIX PANEL ===== -->
+        <!-- ===== 3. MATRIX PANEL (2x2 and 3x3) ===== -->
         <ScrollView
             android:id="@+id/layoutMatrix"
             android:layout_width="match_parent"
@@ -240,19 +247,39 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <!-- Matrix A 2x2 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Matrix A (2x2)"
-                    android:textColor="#FF9F0A"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
+                <!-- Header + Size Toggle -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <TextView
+                        android:id="@+id/tvMatrixHeaderA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="Matrix A (2x2)"
+                        android:textColor="#FF9F0A"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/btnMatrixToggleSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:text="Dimension: 2x2"
+                        android:textSize="12sp"
+                        style="@style/CalcBtnFunc" />
+                </RelativeLayout>
+
+                <!-- Matrix A Row 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
                     <EditText
                         android:id="@+id/etA11"
                         android:layout_width="0dp"
@@ -277,8 +304,22 @@
                         android:gravity="center"
                         android:background="@drawable/btn_func"
                         android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etA13"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A13"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
+                <!-- Matrix A Row 2 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -307,10 +348,69 @@
                         android:gravity="center"
                         android:background="@drawable/btn_func"
                         android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etA23"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A23"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
-                <!-- Matrix B 2x2 -->
+                <!-- Matrix A Row 3 (for 3x3) -->
+                <LinearLayout
+                    android:id="@+id/rowA3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/etA31"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A31"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etA32"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A32"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etA33"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="A33"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                </LinearLayout>
+
+                <!-- Matrix B Header -->
                 <TextView
+                    android:id="@+id/tvMatrixHeaderB"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Matrix B (2x2)"
@@ -319,10 +419,12 @@
                     android:textSize="14sp"
                     android:layout_marginTop="12dp" />
 
+                <!-- Matrix B Row 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
                     <EditText
                         android:id="@+id/etB11"
                         android:layout_width="0dp"
@@ -347,8 +449,22 @@
                         android:gravity="center"
                         android:background="@drawable/btn_func"
                         android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etB13"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B13"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
+                <!-- Matrix B Row 2 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -371,6 +487,64 @@
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:hint="B22"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etB23"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B23"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <!-- Matrix B Row 3 (for 3x3) -->
+                <LinearLayout
+                    android:id="@+id/rowB3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+                    <EditText
+                        android:id="@+id/etB31"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B31"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etB32"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B32"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#7A7A9A"
+                        android:gravity="center"
+                        android:background="@drawable/btn_func"
+                        android:layout_margin="2dp" />
+                    <EditText
+                        android:id="@+id/etB33"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="B33"
                         android:inputType="numberDecimal|numberSigned"
                         android:textColor="#FFFFFF"
                         android:textColorHint="#7A7A9A"
